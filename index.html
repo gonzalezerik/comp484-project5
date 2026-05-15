@@ -12,25 +12,36 @@
 
     <!-- ===== Left Sidebar ===== -->
     <div id="sidebar">
-      <h2>Map Quiz. Please double click<br>on the map the location of:</h2>
+
+      <!-- Header block — Leviathan-style title -->
+      <div id="sidebar-header">
+        <div class="header-title">CSUN <span class="accent">MAP QUIZ</span></div>
+        <div class="header-sub">Campus Location Verification System</div>
+      </div>
+
+      <!-- Instruction strip -->
+      <div id="instruction-strip">
+        <span class="label">INPUT //</span> Double-click the map to mark the target location
+      </div>
 
       <!-- Running history of questions and answers -->
       <div id="history"></div>
 
       <!-- Timer and high score -->
       <div id="stats">
-        <span id="timer">Time: 0s</span>
-        <span id="high-score">Best: &mdash;</span>
+        <span id="timer">TIME // 0s</span>
+        <span id="high-score">BEST // &mdash;</span>
       </div>
 
       <!-- Final score shown after all 5 questions -->
       <div id="final-score" style="display:none"></div>
 
       <!-- New record message -->
-      <div id="new-record-msg" style="display:none">&#127942; New Record!</div>
+      <div id="new-record-msg" style="display:none">&#9670; NEW RECORD LOGGED</div>
 
       <!-- Play Again button -->
-      <button id="restart-btn" style="display:none">Play Again</button>
+      <button id="restart-btn" style="display:none">[ INITIATE NEW SESSION ]</button>
+
     </div>
 
     <!-- ===== Google Map ===== -->

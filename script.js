@@ -1,7 +1,61 @@
 "use strict";
 
 // ---------------------------------------------------------------------------
-// Building polygons — coordinates derived from the CSUN campus grid.
+// Dark map style — no labels, no POIs, Leviathan color palette
+// All label visibility is disabled so only road geometry and water show.
+// ---------------------------------------------------------------------------
+var DARK_MAP_STYLE = [
+  // Base geometry — near-black
+  { elementType: "geometry",
+    stylers: [{ color: "#0a0f1a" }] },
+
+  // Kill every label (road names, building names, area names, icons)
+  { elementType: "labels",
+    stylers: [{ visibility: "off" }] },
+
+  // Roads — dark slate so paths are visible but subtle
+  { featureType: "road",
+    elementType: "geometry",
+    stylers: [{ color: "#1e293b" }] },
+  { featureType: "road.highway",
+    elementType: "geometry",
+    stylers: [{ color: "#334155" }] },
+  { featureType: "road.arterial",
+    elementType: "geometry",
+    stylers: [{ color: "#263548" }] },
+
+  // Water — very dark navy
+  { featureType: "water",
+    elementType: "geometry",
+    stylers: [{ color: "#060d1b" }] },
+
+  // Landscape / terrain
+  { featureType: "landscape",
+    elementType: "geometry",
+    stylers: [{ color: "#111827" }] },
+  { featureType: "landscape.natural",
+    elementType: "geometry",
+    stylers: [{ color: "#0d1a12" }] },
+
+  // Parks — very dark green tint
+  { featureType: "poi.park",
+    elementType: "geometry",
+    stylers: [{ color: "#0d1a0d" }] },
+
+  // Hide all points of interest and transit clutter
+  { featureType: "poi",
+    stylers: [{ visibility: "off" }] },
+  { featureType: "transit",
+    stylers: [{ visibility: "off" }] },
+
+  // Administrative boundaries — faint slate
+  { featureType: "administrative",
+    elementType: "geometry",
+    stylers: [{ color: "#1e293b" }] },
+];
+
+// ---------------------------------------------------------------------------
+// Building polygons — GPS coordinates for 5 CSUN campus locations.
 // Oasis Wellness Center (F4) is the instructor-assigned mandatory location.
 // ---------------------------------------------------------------------------
 var LOCATIONS = [
@@ -61,7 +115,7 @@ var LOCATIONS = [
 // Game state
 // ---------------------------------------------------------------------------
 var map;
-var questions      = [];   // shuffled copy of LOCATIONS for this round
+var questions      = [];
 var currentIndex   = 0;
 var score          = 0;
 var activePolygons = [];
@@ -76,12 +130,20 @@ function initMap() {
   map = new google.maps.Map(document.getElementById("map"), {
     center: { lat: 34.2410, lng: -118.5283 },
     zoom: 16,
-    // Lock the map so only double-clicks register — no accidental panning
-    draggable: false,
-    scrollwheel: false,
+
+    // Allow the user to pan and scroll-zoom to explore campus
+    draggable: true,
+    scrollwheel: true,
+    gestureHandling: "greedy",
+
+    // Keep double-click zoom OFF — we use dblclick for quiz guesses
     disableDoubleClickZoom: true,
+
+    // Hide all Google UI chrome; keep the map clean
     disableDefaultUI: true,
-    gestureHandling: "none"
+
+    // Apply dark Leviathan-style map theme with no labels
+    styles: DARK_MAP_STYLE
   });
 
   map.addListener("dblclick", function (e) {
@@ -105,18 +167,17 @@ function startQuiz() {
   acceptingInput = false;
 
   clearPolygons();
-  document.getElementById("history").innerHTML = "";
+  document.getElementById("history").innerHTML        = "";
   document.getElementById("final-score").style.display    = "none";
   document.getElementById("new-record-msg").style.display = "none";
   document.getElementById("restart-btn").style.display    = "none";
-  document.getElementById("timer").textContent = "Time: 0s";
+  document.getElementById("timer").textContent = "TIME // 0s";
 
-  if (timerInterval) {
-    clearInterval(timerInterval);
-  }
+  if (timerInterval) { clearInterval(timerInterval); }
+
   timerInterval = setInterval(function () {
     elapsedSeconds++;
-    document.getElementById("timer").textContent = "Time: " + elapsedSeconds + "s";
+    document.getElementById("timer").textContent = "TIME // " + elapsedSeconds + "s";
   }, 1000);
 
   askQuestion();
@@ -128,37 +189,35 @@ function askQuestion() {
     return;
   }
 
-  var loc  = questions[currentIndex];
-  var bar  = document.createElement("div");
+  var loc = questions[currentIndex];
+  var bar = document.createElement("div");
   bar.className   = "q-bar";
   bar.id          = "q-bar-" + currentIndex;
-  bar.textContent = (currentIndex + 1) + ". " + loc.name;
+  bar.textContent = (currentIndex + 1) + " // " + loc.name.toUpperCase();
   document.getElementById("history").appendChild(bar);
 
-  // Scroll the new bar into view
   bar.scrollIntoView({ behavior: "smooth", block: "end" });
-
   acceptingInput = true;
 }
 
 function handleGuess(latLng) {
   acceptingInput = false;
 
-  var loc    = questions[currentIndex];
-  var poly   = buildPolygon(loc.polygon);
-  var isHit  = google.maps.geometry.poly.containsLocation(latLng, poly);
+  var loc   = questions[currentIndex];
+  var poly  = buildPolygon(loc.polygon);
+  var isHit = google.maps.geometry.poly.containsLocation(latLng, poly);
 
-  // Always draw the correct polygon so the user can learn
-  drawPolygon(loc.polygon, isHit ? "#00aa00" : "#cc0000");
+  // Draw the correct boundary — cyan on hit, red on miss
+  drawPolygon(loc.polygon, isHit ? "#06b6d4" : "#f87171");
 
   var result = document.createElement("div");
   result.className = "q-result";
 
   if (isHit) {
     score++;
-    result.innerHTML = '<span class="q-correct">Correct!</span> +1 point';
+    result.innerHTML = '<span class="q-correct">&#10003; CONFIRMED</span> &nbsp;+1 point';
   } else {
-    result.innerHTML = '<span class="q-wrong">Wrong!</span> The highlighted area shows the correct location.';
+    result.innerHTML = '<span class="q-wrong">&#10007; WRONG SECTOR</span> &nbsp;Correct area highlighted.';
     triggerShake();
   }
 
@@ -166,8 +225,6 @@ function handleGuess(latLng) {
   result.scrollIntoView({ behavior: "smooth", block: "end" });
 
   currentIndex++;
-
-  // Short pause before next question so the user can read feedback
   setTimeout(askQuestion, 1200);
 }
 
@@ -179,11 +236,11 @@ function endGame() {
   var finalDiv = document.getElementById("final-score");
   finalDiv.innerHTML =
     "<h1>" + score + " / " + questions.length + "</h1>" +
-    "<p>Completed in " + elapsedSeconds + " second" + (elapsedSeconds === 1 ? "" : "s") + "</p>";
+    "<p>Mission complete &mdash; " + elapsedSeconds + " second" +
+    (elapsedSeconds === 1 ? "" : "s") + " elapsed</p>";
   finalDiv.style.display = "block";
 
   document.getElementById("restart-btn").style.display = "block";
-
   document.getElementById("restart-btn").onclick = function () {
     clearPolygons();
     startQuiz();
@@ -198,17 +255,9 @@ function endGame() {
 var LS_KEY = "csunMapQuizBest";
 
 function checkHighScore() {
-  var best    = getBest();
-  var isFirst = !best;
-  var improved = false;
-
-  if (isFirst) {
-    improved = true;
-  } else if (score > best.score) {
-    improved = true;
-  } else if (score === best.score && elapsedSeconds < best.time) {
-    improved = true;
-  }
+  var best     = getBest();
+  var improved = !best || score > best.score ||
+                 (score === best.score && elapsedSeconds < best.time);
 
   if (improved) {
     localStorage.setItem(LS_KEY, JSON.stringify({ score: score, time: elapsedSeconds }));
@@ -221,18 +270,17 @@ function getBest() {
   try {
     var raw = localStorage.getItem(LS_KEY);
     return raw ? JSON.parse(raw) : null;
-  } catch (e) {
-    return null;
-  }
+  } catch (e) { return null; }
 }
 
 function renderHighScore() {
   var best = getBest();
   var el   = document.getElementById("high-score");
   if (best) {
-    el.textContent = "Best: " + best.score + "/" + LOCATIONS.length + " (" + best.time + "s)";
+    el.textContent = "BEST // " + best.score + "/" + LOCATIONS.length +
+                     " (" + best.time + "s)";
   } else {
-    el.innerHTML = "Best: &mdash;";
+    el.innerHTML = "BEST // &mdash;";
   }
 }
 
@@ -240,20 +288,18 @@ function renderHighScore() {
 // Polygon helpers
 // ---------------------------------------------------------------------------
 function buildPolygon(coords) {
-  return new google.maps.Polygon({
-    paths: coords
-  });
+  return new google.maps.Polygon({ paths: coords });
 }
 
 function drawPolygon(coords, color) {
   var poly = new google.maps.Polygon({
-    paths: coords,
-    strokeColor: color,
+    paths:         coords,
+    strokeColor:   color,
     strokeOpacity: 0.9,
-    strokeWeight: 2,
-    fillColor: color,
-    fillOpacity: 0.30,
-    map: map
+    strokeWeight:  2,
+    fillColor:     color,
+    fillOpacity:   0.25,
+    map:           map
   });
   activePolygons.push(poly);
 }
@@ -269,8 +315,7 @@ function clearPolygons() {
 function triggerShake() {
   var sidebar = document.getElementById("sidebar");
   sidebar.classList.remove("shake");
-  // Force reflow so the animation restarts if already running
-  void sidebar.offsetWidth;
+  void sidebar.offsetWidth;   // force reflow so animation restarts
   sidebar.classList.add("shake");
   sidebar.addEventListener("animationend", function handler() {
     sidebar.classList.remove("shake");
@@ -280,10 +325,10 @@ function triggerShake() {
 
 function shuffleArray(arr) {
   for (var i = arr.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
+    var j   = Math.floor(Math.random() * (i + 1));
     var tmp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = tmp;
+    arr[i]  = arr[j];
+    arr[j]  = tmp;
   }
   return arr;
 }

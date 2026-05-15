@@ -1,3 +1,18 @@
+/* =============================================================
+   CSUN Map Quiz — Leviathan-inspired dark theme
+   Color palette:
+     #000000  — pure black (sidebar bg)
+     #0a0f1a  — near-black (map bg, deep panels)
+     #1e293b  — slate-800  (borders, dividers)
+     #0f172a  — slate-950  (secondary panels)
+     #94a3b8  — slate-400  (body text)
+     #475569  — slate-600  (dim text / labels)
+     #06b6d4  — cyan-500   (primary accent)
+     #22d3ee  — cyan-400   (correct / highlight)
+     #f87171  — red-400    (wrong)
+     #ffffff  — white      (heading text)
+============================================================= */
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -6,126 +21,238 @@
 
 html, body {
   height: 100%;
-  font-family: Arial, sans-serif;
+  /* Monospace gives the data-terminal feel of Leviathan */
+  font-family: 'Courier New', Courier, monospace;
+  background: #000;
 }
 
 #container {
   display: flex;
   height: 100vh;
+  background: #000;
 }
 
-/* ===== Sidebar ===== */
+
+/* =====================================================
+   Sidebar
+===================================================== */
 #sidebar {
-  width: 285px;
-  min-width: 285px;
-  background: #d4b896;
+  width: 360px;
+  min-width: 360px;
+  background: #000;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  /* Leviathan: hard right border in slate-800 */
+  border-right: 1px solid #1e293b;
+  color: #94a3b8;
+  position: relative;
 }
 
-#sidebar h2 {
-  background: #2a68b5;
-  color: #fff;
-  font-size: 0.95rem;
-  padding: 10px 12px;
-  text-align: center;
-  line-height: 1.4;
+/* Custom scrollbar (webkit) to stay on theme */
+#history::-webkit-scrollbar        { width: 3px; }
+#history::-webkit-scrollbar-track  { background: #000; }
+#history::-webkit-scrollbar-thumb  { background: #1e293b; border-radius: 2px; }
+
+
+/* =====================================================
+   Sidebar header block
+===================================================== */
+#sidebar-header {
+  padding: 20px 20px 14px;
+  border-bottom: 1px solid #1e293b;
+  background: rgba(15, 23, 42, 0.7);
+  flex-shrink: 0;
 }
 
-/* ===== Question history ===== */
+.header-title {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+/* Cyan accent span inside the title */
+.accent { color: #06b6d4; }
+
+.header-sub {
+  margin-top: 5px;
+  font-size: 0.58rem;
+  color: #475569;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+
+/* =====================================================
+   Instruction strip
+===================================================== */
+#instruction-strip {
+  padding: 9px 16px;
+  border-bottom: 1px solid #1e293b;
+  background: rgba(6, 182, 212, 0.04);
+  flex-shrink: 0;
+  font-size: 0.62rem;
+  color: #475569;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+#instruction-strip .label {
+  color: #06b6d4;
+  font-weight: bold;
+}
+
+
+/* =====================================================
+   Question history feed
+===================================================== */
 #history {
   flex: 1;
   overflow-y: auto;
 }
 
+/* Each question name bar */
 .q-bar {
-  background: #2a68b5;
-  color: #fff;
-  text-align: center;
-  padding: 6px 8px;
-  font-size: 0.88rem;
+  padding: 9px 16px;
+  font-size: 0.62rem;
   font-weight: bold;
-  border-bottom: 1px solid #1e4e8a;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #06b6d4;
+  background: rgba(6, 182, 212, 0.06);
+  border-left: 2px solid #06b6d4;
+  border-bottom: 1px solid #1e293b;
+  margin-top: 6px;
 }
 
+/* Answer result row */
 .q-result {
-  padding: 6px 10px;
-  font-size: 0.82rem;
-  border-bottom: 1px solid #c0a07a;
-  line-height: 1.4;
+  padding: 7px 16px 9px;
+  font-size: 0.67rem;
+  border-bottom: 1px solid #0f172a;
+  line-height: 1.5;
+  color: #475569;
 }
 
 .q-correct {
-  color: #1a7a00;
+  color: #22d3ee;
   font-weight: bold;
 }
 
 .q-wrong {
-  color: #cc0000;
+  color: #f87171;
   font-weight: bold;
 }
 
-/* ===== Stats bar ===== */
+
+/* =====================================================
+   Stats bar (timer + best score)
+===================================================== */
 #stats {
   display: flex;
   justify-content: space-between;
-  padding: 7px 10px;
-  font-size: 0.82rem;
+  padding: 9px 16px;
+  font-size: 0.6rem;
   font-weight: bold;
-  border-top: 2px solid #b89060;
-  background: #c8a87e;
+  letter-spacing: 0.12em;
+  border-top: 1px solid #1e293b;
+  background: rgba(15, 23, 42, 0.9);
+  color: #475569;
+  flex-shrink: 0;
 }
 
-/* ===== Final score ===== */
+#timer    { color: #94a3b8; }
+#high-score { color: #94a3b8; }
+
+
+/* =====================================================
+   Final score
+===================================================== */
 #final-score {
-  padding: 14px 12px 4px;
+  padding: 18px 16px 6px;
   text-align: center;
+  flex-shrink: 0;
 }
 
 #final-score h1 {
-  font-size: 1.9rem;
-  color: #2a68b5;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: #06b6d4;
+  letter-spacing: -1px;
 }
 
 #final-score p {
-  font-size: 0.88rem;
-  margin-top: 4px;
+  margin-top: 5px;
+  font-size: 0.6rem;
+  color: #475569;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
 }
 
-/* ===== New record message ===== */
+
+/* =====================================================
+   New record message
+===================================================== */
 #new-record-msg {
   text-align: center;
-  font-size: 1rem;
+  font-size: 0.6rem;
   font-weight: bold;
-  color: #b8860b;
+  color: #06b6d4;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
   padding: 6px;
+  /* Pulse glow like Leviathan's animate-pulse */
+  animation: pulse-cyan 1.8s ease-in-out infinite;
 }
 
-/* ===== Play Again button ===== */
+@keyframes pulse-cyan {
+  0%, 100% { opacity: 1;   text-shadow: 0 0 8px rgba(6,182,212,0.6); }
+  50%       { opacity: 0.4; text-shadow: none; }
+}
+
+
+/* =====================================================
+   Play Again button — Leviathan outlined style
+===================================================== */
 #restart-btn {
-  margin: 10px 20px 14px;
-  padding: 9px 0;
-  background: #2a68b5;
-  color: #fff;
-  font-size: 0.95rem;
+  margin: 8px 16px 16px;
+  padding: 10px 0;
+  background: transparent;
+  color: #06b6d4;
+  font-size: 0.65rem;
   font-weight: bold;
-  border: none;
-  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 1px solid #06b6d4;
+  border-radius: 3px;
   cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  flex-shrink: 0;
 }
 
 #restart-btn:hover {
-  background: #1e4e8a;
+  background: #06b6d4;
+  color: #000;
 }
 
-/* ===== Map ===== */
+
+/* =====================================================
+   Map pane
+===================================================== */
 #map {
   flex: 1;
   height: 100vh;
 }
 
-/* ===== Shake animation for wrong answer ===== */
+
+/* =====================================================
+   Shake animation (wrong answer)
+===================================================== */
 @keyframes shake {
   0%   { transform: translateX(0); }
   15%  { transform: translateX(-8px); }
