@@ -1,17 +1,27 @@
 /* =============================================================
    CSUN Map Quiz — Leviathan-inspired dark theme
-   Color palette:
-     #000000  — pure black (sidebar bg)
-     #0a0f1a  — near-black (map bg, deep panels)
-     #1e293b  — slate-800  (borders, dividers)
-     #0f172a  — slate-950  (secondary panels)
-     #94a3b8  — slate-400  (body text)
-     #475569  — slate-600  (dim text / labels)
-     #06b6d4  — cyan-500   (primary accent)
-     #22d3ee  — cyan-400   (correct / highlight)
-     #f87171  — red-400    (wrong)
-     #ffffff  — white      (heading text)
+
+   Palette
+     #000000 / #050810  pure black / near-black backgrounds
+     #0f172a  slate-950  raised panels
+     #1e293b  slate-800  borders / dividers
+     #94a3b8  slate-400  body text
+     #64748b  slate-500  dim labels
+     #475569  slate-600  faint text
+     #06b6d4  cyan-500   primary accent
+     #22d3ee  cyan-400   correct / highlight
+     #67e8f9  cyan-300   bright glow
+     #f87171  red-400    wrong
+     #ffffff  white      heading text
 ============================================================= */
+
+/* Fonts: Arial-family for headings (matches Leviathan's font-black),
+   monospace ONLY for data rows (matches Tailwind's font-mono).        */
+:root {
+  --font-display: 'Arial Black', Arial, Helvetica, sans-serif;
+  --font-sans:    -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  --font-mono:    'JetBrains Mono', Consolas, 'Courier New', monospace;
+}
 
 * {
   box-sizing: border-box;
@@ -21,9 +31,9 @@
 
 html, body {
   height: 100%;
-  /* Monospace gives the data-terminal feel of Leviathan */
-  font-family: 'Courier New', Courier, monospace;
+  font-family: var(--font-sans);
   background: #000;
+  color: #94a3b8;
 }
 
 #container {
@@ -37,51 +47,68 @@ html, body {
    Sidebar
 ===================================================== */
 #sidebar {
-  width: 360px;
-  min-width: 360px;
-  background: #000;
+  width: 380px;
+  min-width: 380px;
+  background: linear-gradient(180deg, #050810 0%, #000 100%);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  /* Leviathan: hard right border in slate-800 */
   border-right: 1px solid #1e293b;
   color: #94a3b8;
   position: relative;
+  z-index: 10;
 }
 
-/* Custom scrollbar (webkit) to stay on theme */
-#history::-webkit-scrollbar        { width: 3px; }
+/* Custom scrollbar on the feed */
+#history::-webkit-scrollbar        { width: 4px; }
 #history::-webkit-scrollbar-track  { background: #000; }
 #history::-webkit-scrollbar-thumb  { background: #1e293b; border-radius: 2px; }
+#history::-webkit-scrollbar-thumb:hover { background: #334155; }
 
 
 /* =====================================================
-   Sidebar header block
+   Header block — title + subtitle
 ===================================================== */
 #sidebar-header {
-  padding: 20px 20px 14px;
+  padding: 22px 22px 16px;
   border-bottom: 1px solid #1e293b;
-  background: rgba(15, 23, 42, 0.7);
+  background: rgba(15, 23, 42, 0.6);
   flex-shrink: 0;
+  position: relative;
+}
+
+/* Top accent line in cyan */
+#sidebar-header::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg,
+              transparent 0%, #06b6d4 50%, transparent 100%);
+  opacity: 0.5;
 }
 
 .header-title {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 1.1rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
   font-weight: 900;
-  letter-spacing: 0.25em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #ffffff;
+  text-shadow: 0 0 20px rgba(6, 182, 212, 0.25);
 }
 
-/* Cyan accent span inside the title */
-.accent { color: #06b6d4; }
+.accent {
+  color: #06b6d4;
+  text-shadow: 0 0 12px rgba(6, 182, 212, 0.55);
+}
 
 .header-sub {
-  margin-top: 5px;
-  font-size: 0.58rem;
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
   color: #475569;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 
@@ -90,19 +117,20 @@ html, body {
    Instruction strip
 ===================================================== */
 #instruction-strip {
-  padding: 9px 16px;
+  padding: 10px 18px;
   border-bottom: 1px solid #1e293b;
   background: rgba(6, 182, 212, 0.04);
   flex-shrink: 0;
-  font-size: 0.62rem;
-  color: #475569;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: #64748b;
+  letter-spacing: 0.05em;
 }
 
 #instruction-strip .label {
   color: #06b6d4;
   font-weight: bold;
+  letter-spacing: 0.15em;
 }
 
 
@@ -114,57 +142,64 @@ html, body {
   overflow-y: auto;
 }
 
-/* Each question name bar */
+/* Each question target — cyan-bordered tile */
 .q-bar {
-  padding: 9px 16px;
-  font-size: 0.62rem;
+  padding: 11px 18px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
   font-weight: bold;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #06b6d4;
-  background: rgba(6, 182, 212, 0.06);
+  color: #67e8f9;
+  background: rgba(6, 182, 212, 0.07);
   border-left: 2px solid #06b6d4;
   border-bottom: 1px solid #1e293b;
+  box-shadow: inset 12px 0 24px -12px rgba(6, 182, 212, 0.25);
   margin-top: 6px;
 }
 
 /* Answer result row */
 .q-result {
-  padding: 7px 16px 9px;
-  font-size: 0.67rem;
+  padding: 9px 18px 11px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
   border-bottom: 1px solid #0f172a;
   line-height: 1.5;
-  color: #475569;
+  color: #64748b;
+  letter-spacing: 0.02em;
 }
 
 .q-correct {
   color: #22d3ee;
   font-weight: bold;
+  text-shadow: 0 0 8px rgba(34, 211, 238, 0.45);
 }
 
 .q-wrong {
   color: #f87171;
   font-weight: bold;
+  text-shadow: 0 0 8px rgba(248, 113, 113, 0.45);
 }
 
 
 /* =====================================================
-   Stats bar (timer + best score)
+   Stats bar
 ===================================================== */
 #stats {
   display: flex;
   justify-content: space-between;
-  padding: 9px 16px;
-  font-size: 0.6rem;
+  align-items: center;
+  padding: 11px 18px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
   font-weight: bold;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   border-top: 1px solid #1e293b;
-  background: rgba(15, 23, 42, 0.9);
-  color: #475569;
+  background: rgba(15, 23, 42, 0.85);
   flex-shrink: 0;
 }
 
-#timer    { color: #94a3b8; }
+#timer      { color: #94a3b8; }
 #high-score { color: #94a3b8; }
 
 
@@ -172,72 +207,86 @@ html, body {
    Final score
 ===================================================== */
 #final-score {
-  padding: 18px 16px 6px;
+  padding: 24px 16px 8px;
   text-align: center;
   flex-shrink: 0;
+  border-top: 1px solid #1e293b;
+  background: rgba(15, 23, 42, 0.5);
 }
 
 #final-score h1 {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 2.8rem;
+  font-family: var(--font-display);
+  font-size: 3rem;
   font-weight: 900;
   color: #06b6d4;
-  letter-spacing: -1px;
+  letter-spacing: -2px;
+  text-shadow: 0 0 28px rgba(6, 182, 212, 0.55);
 }
 
 #final-score p {
-  margin-top: 5px;
-  font-size: 0.6rem;
-  color: #475569;
-  letter-spacing: 0.15em;
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: #64748b;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
 
 /* =====================================================
-   New record message
+   New record message — pulsing cyan glow
 ===================================================== */
 #new-record-msg {
   text-align: center;
-  font-size: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
   font-weight: bold;
   color: #06b6d4;
-  letter-spacing: 0.35em;
+  letter-spacing: 0.4em;
   text-transform: uppercase;
-  padding: 6px;
-  /* Pulse glow like Leviathan's animate-pulse */
-  animation: pulse-cyan 1.8s ease-in-out infinite;
+  padding: 8px;
+  animation: pulse-glow 1.8s ease-in-out infinite;
 }
 
-@keyframes pulse-cyan {
-  0%, 100% { opacity: 1;   text-shadow: 0 0 8px rgba(6,182,212,0.6); }
-  50%       { opacity: 0.4; text-shadow: none; }
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 10px rgba(6, 182, 212, 0.65),
+                 0 0 20px rgba(6, 182, 212, 0.35);
+  }
+  50% {
+    opacity: 0.45;
+    text-shadow: none;
+  }
 }
 
 
 /* =====================================================
-   Play Again button — Leviathan outlined style
+   Restart button — outlined Leviathan style
 ===================================================== */
 #restart-btn {
-  margin: 8px 16px 16px;
-  padding: 10px 0;
+  margin: 10px 18px 18px;
+  padding: 11px 0;
   background: transparent;
   color: #06b6d4;
-  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
   font-weight: bold;
-  font-family: 'Courier New', monospace;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   border: 1px solid #06b6d4;
   border-radius: 3px;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
   flex-shrink: 0;
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.15),
+              inset 0 0 12px rgba(6, 182, 212, 0.05);
 }
 
 #restart-btn:hover {
   background: #06b6d4;
   color: #000;
+  box-shadow: 0 0 24px rgba(6, 182, 212, 0.5);
 }
 
 
@@ -247,6 +296,7 @@ html, body {
 #map {
   flex: 1;
   height: 100vh;
+  background: #0a0f1a;
 }
 
 
