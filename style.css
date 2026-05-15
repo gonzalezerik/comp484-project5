@@ -1,0 +1,142 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: Arial, sans-serif;
+}
+
+#container {
+  display: flex;
+  height: 100vh;
+}
+
+/* ===== Sidebar ===== */
+#sidebar {
+  width: 285px;
+  min-width: 285px;
+  background: #d4b896;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#sidebar h2 {
+  background: #2a68b5;
+  color: #fff;
+  font-size: 0.95rem;
+  padding: 10px 12px;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* ===== Question history ===== */
+#history {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.q-bar {
+  background: #2a68b5;
+  color: #fff;
+  text-align: center;
+  padding: 6px 8px;
+  font-size: 0.88rem;
+  font-weight: bold;
+  border-bottom: 1px solid #1e4e8a;
+}
+
+.q-result {
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  border-bottom: 1px solid #c0a07a;
+  line-height: 1.4;
+}
+
+.q-correct {
+  color: #1a7a00;
+  font-weight: bold;
+}
+
+.q-wrong {
+  color: #cc0000;
+  font-weight: bold;
+}
+
+/* ===== Stats bar ===== */
+#stats {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 10px;
+  font-size: 0.82rem;
+  font-weight: bold;
+  border-top: 2px solid #b89060;
+  background: #c8a87e;
+}
+
+/* ===== Final score ===== */
+#final-score {
+  padding: 14px 12px 4px;
+  text-align: center;
+}
+
+#final-score h1 {
+  font-size: 1.9rem;
+  color: #2a68b5;
+}
+
+#final-score p {
+  font-size: 0.88rem;
+  margin-top: 4px;
+}
+
+/* ===== New record message ===== */
+#new-record-msg {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #b8860b;
+  padding: 6px;
+}
+
+/* ===== Play Again button ===== */
+#restart-btn {
+  margin: 10px 20px 14px;
+  padding: 9px 0;
+  background: #2a68b5;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#restart-btn:hover {
+  background: #1e4e8a;
+}
+
+/* ===== Map ===== */
+#map {
+  flex: 1;
+  height: 100vh;
+}
+
+/* ===== Shake animation for wrong answer ===== */
+@keyframes shake {
+  0%   { transform: translateX(0); }
+  15%  { transform: translateX(-8px); }
+  30%  { transform: translateX(8px); }
+  45%  { transform: translateX(-6px); }
+  60%  { transform: translateX(6px); }
+  75%  { transform: translateX(-3px); }
+  90%  { transform: translateX(3px); }
+  100% { transform: translateX(0); }
+}
+
+#sidebar.shake {
+  animation: shake 0.55s ease;
+}

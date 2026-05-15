@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSUN Campus Map Quiz</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div id="container">
+
+    <!-- ===== Left Sidebar ===== -->
+    <div id="sidebar">
+      <h2>Map Quiz. Please double click<br>on the map the location of:</h2>
+
+      <!-- Running history of questions and answers -->
+      <div id="history"></div>
+
+      <!-- Timer and high score -->
+      <div id="stats">
+        <span id="timer">Time: 0s</span>
+        <span id="high-score">Best: &mdash;</span>
+      </div>
+
+      <!-- Final score shown after all 5 questions -->
+      <div id="final-score" style="display:none"></div>
+
+      <!-- New record message -->
+      <div id="new-record-msg" style="display:none">&#127942; New Record!</div>
+
+      <!-- Play Again button -->
+      <button id="restart-btn" style="display:none">Play Again</button>
+    </div>
+
+    <!-- ===== Google Map ===== -->
+    <div id="map"></div>
+
+  </div>
+
+  <!-- Load game logic before Maps API so initMap is defined when API calls back -->
+  <script src="script.js"></script>
+  <script
+    async
+    defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBpyjx15YOu55WmbcD3ypkL1aLXjQcxruM&libraries=geometry&callback=initMap"
+  ></script>
+
+</body>
+</html>
